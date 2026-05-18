@@ -9,7 +9,7 @@ services:
     networks:
       - signal-network
     depends_on:
-      - signal-cli-server
+      - cli-server
 
   cli-server:
     image: bbernhard/signal-cli-rest-api:latest
