@@ -4,17 +4,19 @@ import type {
   ICoolifyDeploymentSuccessWebhookEvent,
   ICoolifyDeploymentWebhookEvent,
   ICoolifyDeploymentWebhookEventBase,
+  ICoolifyTestWebhookEvent,
   ISignalSendMessageResponse,
 } from "./types";
 
 // coolify payload
-const REQUIRED_PAYLOAD_KEYS = [
+const REQUIRED_DEPLOYMENT_PAYLOAD_KEYS = [
   "application_name",
   "application_uuid",
   "deployment_uuid",
   "deployment_url",
   "environment",
 ] as const;
+const REQUIRED_TEST_PAYLOAD_KEYS = ["success", "message", "event", "url"] as const;
 const UNKNOWN_PAYLOAD_EVENT_TYPE_NAME = "unknown event name";
 
 // signal cli REST api
@@ -26,10 +28,14 @@ const isCoolifyWebhookPayloadValid = (payload: unknown): boolean => {
   if (typeof payload !== "object") return false;
 
   const payloadKeys = Object.keys(payload as object);
-  const isMissingRequiredKey = REQUIRED_PAYLOAD_KEYS.some(
+
+  const isMissingRequiredTestKey = REQUIRED_TEST_PAYLOAD_KEYS.some(
     (requiredKey) => !payloadKeys.includes(requiredKey),
   );
-  if (isMissingRequiredKey) return false;
+  const isMissingRequiredDeploymentKey = REQUIRED_DEPLOYMENT_PAYLOAD_KEYS.some(
+    (requiredKey) => !payloadKeys.includes(requiredKey),
+  );
+  if (isMissingRequiredDeploymentKey && isMissingRequiredTestKey) return false;
 
   return true;
 };
@@ -98,6 +104,15 @@ const formatApplicationStatusChangedMessage = (
     payload.message,
   ]);
 
+const formatTestWebhookMessage = (payload: ICoolifyTestWebhookEvent): string =>
+  joinMessageLines([
+    "🧪 Coolify test webhook",
+    "",
+    `🔗 ${payload.url}`,
+    "",
+    payload.message,
+  ]);
+
 const formatPayloadMessage = (
   payload: ICoolifyDeploymentWebhookEvent,
 ): string => {
@@ -108,8 +123,10 @@ const formatPayloadMessage = (
       return formatDeploymentFailedMessage(payload);
     case "status_changed":
       return formatApplicationStatusChangedMessage(payload);
+    case "test":
+      return formatTestWebhookMessage(payload);
     default:
-      return "unknown event name";
+      return UNKNOWN_PAYLOAD_EVENT_TYPE_NAME;
   }
 };
 
@@ -143,7 +160,7 @@ const sendWebhookDeploymentSignalMessage = async (
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      message: formatPayloadMessage,
+      message: formattedPayloadMessage,
       number: receiverPhoneNumber,
       recipients: [receiverPhoneNumber],
     }),

@@ -34,10 +34,18 @@ export interface ICoolifyApplicationStatusChangedWebhookEvent {
   fqdn: string;
 }
 
+export interface ICoolifyTestWebhookEvent {
+  success: boolean;
+  message: string;
+  event: "test";
+  url: string;
+}
+
 export type ICoolifyDeploymentWebhookEvent =
   | ICoolifyDeploymentFailedWebhookEvent
   | ICoolifyDeploymentSuccessWebhookEvent
-  | ICoolifyApplicationStatusChangedWebhookEvent;
+  | ICoolifyApplicationStatusChangedWebhookEvent
+  | ICoolifyTestWebhookEvent;
 
 export interface ISignalSendMessageResponse {
   success: boolean;

@@ -17,7 +17,7 @@ const signalProxyHandler = async (
   );
 
   if (!isCoolifyWebhookPayloadValid(rawPayload)) {
-    console.error('The payload received was invalid');
+    console.error("The payload received was invalid");
     return new Response(
       "Invalid Coolify deployment webhook payload in request body",
       { status: 400 },
@@ -30,13 +30,15 @@ const signalProxyHandler = async (
     SIGNAL_PHONE_NUMBER ?? "",
   );
   if (!success) {
-    console.error('Failed to send message to Signal REST API');
+    console.error("Failed to send message to Signal REST API");
     return new Response(`Error with message: ${message}`, {
       status: 502,
     });
   }
 
-  console.log(`Sent payload successfully to phone number: ${SIGNAL_PHONE_NUMBER}`);
+  console.log(
+    `Sent payload successfully to phone number: ${SIGNAL_PHONE_NUMBER}`,
+  );
   return new Response("Received payload and sent to Signal server", {
     status: 200,
   });
