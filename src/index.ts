@@ -17,6 +17,7 @@ const signalProxyHandler = async (
   );
 
   if (!isCoolifyWebhookPayloadValid(rawPayload)) {
+    console.error('The payload received was invalid');
     return new Response(
       "Invalid Coolify deployment webhook payload in request body",
       { status: 400 },
