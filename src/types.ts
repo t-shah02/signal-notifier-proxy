@@ -38,3 +38,8 @@ export type ICoolifyDeploymentWebhookEvent =
   | ICoolifyDeploymentFailedWebhookEvent
   | ICoolifyDeploymentSuccessWebhookEvent
   | ICoolifyApplicationStatusChangedWebhookEvent;
+
+export interface ISignalSendMessageResponse {
+  success: boolean;
+  message?: string;
+}
