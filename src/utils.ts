@@ -16,7 +16,12 @@ const REQUIRED_DEPLOYMENT_PAYLOAD_KEYS = [
   "deployment_url",
   "environment",
 ] as const;
-const REQUIRED_TEST_PAYLOAD_KEYS = ["success", "message", "event", "url"] as const;
+const REQUIRED_TEST_PAYLOAD_KEYS = [
+  "success",
+  "message",
+  "event",
+  "url",
+] as const;
 const UNKNOWN_PAYLOAD_EVENT_TYPE_NAME = "unknown event name";
 
 // signal cli REST api
